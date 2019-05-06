@@ -1,2 +1,2 @@
-# gradle-properties
-A gradle plugin used to make project properties easier to manage.
+# gradle-template
+A template for applying common functionality to all the Red Pill Analytics Gradle plugins.

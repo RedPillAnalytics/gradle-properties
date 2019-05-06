@@ -1,0 +1,195 @@
+plugins {
+   id "com.gradle.plugin-publish" version "0.10.1"
+   id "pl.allegro.tech.build.axion-release" version "1.10.0"
+   id "com.github.breadmoirai.github-release" version "2.2.6"
+   id 'groovy'
+   id 'java-gradle-plugin'
+   id 'org.unbroken-dome.test-sets' version '2.1.1'
+   id "com.github.ben-manes.versions" version "0.21.0"
+   id "org.dvaske.gradle.git-build-info" version "0.9"
+   id 'com.adarshr.test-logger' version '1.6.0'
+   id "com.redpillanalytics.gradle-analytics" version "1.1.23"
+   id "com.avast.gradle.docker-compose" version "0.9.1"
+}
+
+ext.projectName = 'gradle-template'
+
+// send analytics
+analytics {
+   organization = 'Red Pill Analytics'
+   sinks {
+      pubsub
+   }
+}
+
+scmVersion {
+
+   tag {
+      prefix = 'v'
+      versionSeparator = ''
+   }
+   ignoreUncommittedChanges = true
+}
+
+//set Gradle version to SCM Version
+allprojects {
+   project.version = scmVersion.version
+}
+
+githubRelease {
+
+   token = githubToken
+   owner = 'RedPillAnalytics'
+   repo = projectName
+   tagName = "v${version}"
+   releaseAssets = fileTree(dir: buildDir, includes: ["**/*${version}*", "**/*${version}*.jar"]).toList()
+}
+
+dependencies {
+
+   compile gradleApi()
+   compile localGroovy()
+   compile 'org.slf4j:slf4j-simple:+'
+
+   compile 'com.google.code.gson:gson:+'
+   compile 'org.eclipse.jgit:org.eclipse.jgit:+'
+
+   compile 'com.amazonaws:aws-java-sdk-kinesis:+'
+   compile 'com.amazonaws:aws-java-sdk-s3:+'
+
+   compile 'com.google.cloud:google-cloud-pubsub:+'
+
+   // Kafka
+   compile 'org.apache.kafka:kafka-clients:2.1.1'
+   compile 'org.apache.avro:avro:1.8.2'
+
+   compile 'com.google.cloud:google-cloud-storage:+'
+
+   // git properties dependencies
+   compile "gradle.plugin.org.dvaske.gradle:git-build-info:0.9"
+   compile "org.ajoberstar.grgit:grgit-gradle:3.0.0"
+
+   testCompile 'org.spockframework:spock-core:1.2-groovy-2.5'
+}
+
+// Default artifact naming.
+group = 'com.redpillanalytics'
+
+repositories {
+   jcenter()
+   maven {
+      url "https://plugins.gradle.org/m2/"
+   }
+   maven {
+      url releaseUrl
+      authentication {
+         awsIm(AwsImAuthentication)
+      }
+   }
+   maven {
+      url snapshotUrl
+      authentication {
+         awsIm(AwsImAuthentication)
+      }
+   }
+   maven {
+      url "http://packages.confluent.io/maven/"
+   }
+}
+
+gradlePlugin {
+   plugins {
+      gradleTemplate {
+         id = 'com.redpillanalytics.' + projectName
+         implementationClass = 'com.redpillanalytics.template.TemplatePlugin'
+      }
+   }
+}
+
+pluginBundle {
+
+   website = 'http://redpillanalytics.com/'
+   vcsUrl = "https://github.com/RedPillAnalytics/${projectName}/"
+
+   plugins {
+      gradleTemplate {
+         id = "com.redpillanalytics.${projectName}"
+         displayName = projectName
+         description = "A plugin for publishing data from Gradle builds to a variety of cloud and on-premises data sinks."
+         tags = ['plugin', 'template']
+         version = project.version
+      }
+   }
+}
+
+// Options for all tests
+tasks.withType(Test) {
+   ignoreFailures true
+   testLogging.showStandardStreams true
+   systemProperty 'projectDir', temporaryDir
+}
+
+task downloadGCPCreds {
+   description 'Get GCP credentials JSON file.'
+   doLast {
+      exec {
+         executable 'aws'
+         args 's3', 'cp', "s3://rpa-build-resources/gradle-analytics-build-user.json", "."
+      }
+   }
+}
+
+ext.bucket = 's3://documentation.redpillanalytics.com'
+ext.resourceBucket = 's3://rpa-build-resources'
+
+task publishVersionDocs {
+
+   description = 'Upload version Groovydocs to s3.'
+   group = 'documentation'
+
+   doLast {
+      exec {
+         executable 'aws'
+         args 's3', 'sync', groovydoc.destinationDir.getPath(), "${bucket}/${projectName}/${version}/"
+      }
+   }
+   dependsOn groovydoc
+}
+
+task publishLatestDocs {
+
+   description = 'Upload latest Groovydocs to s3.'
+   group = 'documentation'
+
+   doLast {
+      exec {
+         executable 'aws'
+         args 's3', 'sync', groovydoc.destinationDir.getPath(), "${bucket}/${bucketPath}/latest/"
+      }
+   }
+   dependsOn groovydoc
+   onlyIf { gitBranch == 'master' }
+}
+
+task copyBuildResources {
+   description 'Copy build resource files from S3.'
+   group 'build'
+   doLast {
+      exec {
+         executable 'aws'
+         args 's3', 'cp', "${resourceBucket}/gradle-analytics-build-user.json", "."
+      }
+      exec {
+         executable 'aws'
+         args 's3', 'cp', "${resourceBucket}/gradle.properties", "."
+      }
+   }
+}
+
+tasks.publishPlugins.dependsOn publishVersionDocs, publishLatestDocs
+
+// Only execute certain tasks if we are on the master branch
+//tasks.release.configure { onlyIf { gitBranch == 'master' } }
+//tasks.publishPlugins.configure { onlyIf { gitBranch == 'master' } }
+//tasks.githubRelease.configure { onlyIf { gitBranch == 'master' } }
+
