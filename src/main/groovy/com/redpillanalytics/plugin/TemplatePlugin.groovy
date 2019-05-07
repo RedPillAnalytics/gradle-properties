@@ -1,4 +1,4 @@
-package com.redpillanalytics.template
+package com.redpillanalytics.plugin
 import com.redpillanalytics.common.GradleUtils
 import groovy.util.logging.Slf4j
 import org.gradle.api.GradleException

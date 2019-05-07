@@ -1,26 +1,26 @@
 plugins {
    id "com.gradle.plugin-publish" version "0.10.1"
-   id "pl.allegro.tech.build.axion-release" version "1.10.0"
-   id "com.github.breadmoirai.github-release" version "2.2.6"
+   id "pl.allegro.tech.build.axion-release" version "1.10.1"
+   id "com.github.breadmoirai.github-release" version "2.2.8"
    id 'groovy'
    id 'java-gradle-plugin'
    id 'org.unbroken-dome.test-sets' version '2.1.1'
    id "com.github.ben-manes.versions" version "0.21.0"
    id "org.dvaske.gradle.git-build-info" version "0.9"
    id 'com.adarshr.test-logger' version '1.6.0'
-   id "com.redpillanalytics.gradle-analytics" version "1.1.23"
-   id "com.avast.gradle.docker-compose" version "0.9.1"
+   //id "com.redpillanalytics.gradle-analytics" version "1.2.3"
+   id "com.avast.gradle.docker-compose" version "0.9.4"
 }
 
-ext.projectName = 'gradle-template'
+ext.pluginName = 'plugin-template'
 
 // send analytics
-analytics {
-   organization = 'Red Pill Analytics'
-   sinks {
-      pubsub
-   }
-}
+//analytics {
+//   organization = 'Red Pill Analytics'
+//   sinks {
+//      pubsub
+//   }
+//}
 
 scmVersion {
 
@@ -40,7 +40,7 @@ githubRelease {
 
    token = githubToken
    owner = 'RedPillAnalytics'
-   repo = projectName
+   repo = pluginName
    tagName = "v${version}"
    releaseAssets = fileTree(dir: buildDir, includes: ["**/*${version}*", "**/*${version}*.jar"]).toList()
 }
@@ -51,23 +51,9 @@ dependencies {
    compile localGroovy()
    compile 'org.slf4j:slf4j-simple:+'
 
-   compile 'com.google.code.gson:gson:+'
-   compile 'org.eclipse.jgit:org.eclipse.jgit:+'
-
-   compile 'com.amazonaws:aws-java-sdk-kinesis:+'
-   compile 'com.amazonaws:aws-java-sdk-s3:+'
-
-   compile 'com.google.cloud:google-cloud-pubsub:+'
-
-   // Kafka
-   compile 'org.apache.kafka:kafka-clients:2.1.1'
-   compile 'org.apache.avro:avro:1.8.2'
-
-   compile 'com.google.cloud:google-cloud-storage:+'
-
    // git properties dependencies
    compile "gradle.plugin.org.dvaske.gradle:git-build-info:0.9"
-   compile "org.ajoberstar.grgit:grgit-gradle:3.0.0"
+   compile "org.ajoberstar.grgit:grgit-gradle:3.1.1"
 
    testCompile 'org.spockframework:spock-core:1.2-groovy-2.5'
 }
@@ -99,9 +85,9 @@ repositories {
 
 gradlePlugin {
    plugins {
-      gradleTemplate {
-         id = 'com.redpillanalytics.' + projectName
-         implementationClass = 'com.redpillanalytics.template.TemplatePlugin'
+      pluginTemplate {
+         id = 'com.redpillanalytics.' + pluginName
+         implementationClass = 'com.redpillanalytics.plugin.TemplatePlugin'
       }
    }
 }
@@ -109,12 +95,12 @@ gradlePlugin {
 pluginBundle {
 
    website = 'http://redpillanalytics.com/'
-   vcsUrl = "https://github.com/RedPillAnalytics/${projectName}/"
+   vcsUrl = "https://github.com/RedPillAnalytics/${pluginName}/"
 
    plugins {
-      gradleTemplate {
-         id = "com.redpillanalytics.${projectName}"
-         displayName = projectName
+      pluginTemplate {
+         id = "com.redpillanalytics.${pluginName}"
+         displayName = pluginName
          description = "A plugin for publishing data from Gradle builds to a variety of cloud and on-premises data sinks."
          tags = ['plugin', 'template']
          version = project.version
@@ -150,7 +136,7 @@ task publishVersionDocs {
    doLast {
       exec {
          executable 'aws'
-         args 's3', 'sync', groovydoc.destinationDir.getPath(), "${bucket}/${projectName}/${version}/"
+         args 's3', 'sync', groovydoc.destinationDir.getPath(), "${bucket}/${pluginName}/${version}/"
       }
    }
    dependsOn groovydoc
@@ -188,8 +174,4 @@ task copyBuildResources {
 
 tasks.publishPlugins.dependsOn publishVersionDocs, publishLatestDocs
 
-// Only execute certain tasks if we are on the master branch
-//tasks.release.configure { onlyIf { gitBranch == 'master' } }
-//tasks.publishPlugins.configure { onlyIf { gitBranch == 'master' } }
-//tasks.githubRelease.configure { onlyIf { gitBranch == 'master' } }
 
