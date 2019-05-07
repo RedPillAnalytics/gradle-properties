@@ -6,7 +6,7 @@ plugins {
    id 'java-gradle-plugin'
    id 'org.unbroken-dome.test-sets' version '2.1.1'
    id "com.github.ben-manes.versions" version "0.21.0"
-   id "org.dvaske.gradle.git-build-info" version "0.9"
+   //id "org.dvaske.gradle.git-build-info" version "0.9"
    id 'com.adarshr.test-logger' version '1.6.0'
    //id "com.redpillanalytics.gradle-analytics" version "1.2.3"
    id "com.avast.gradle.docker-compose" version "0.9.4"
@@ -115,16 +115,6 @@ tasks.withType(Test) {
    systemProperty 'projectDir', temporaryDir
 }
 
-task downloadGCPCreds {
-   description 'Get GCP credentials JSON file.'
-   doLast {
-      exec {
-         executable 'aws'
-         args 's3', 'cp', "s3://rpa-build-resources/gradle-analytics-build-user.json", "."
-      }
-   }
-}
-
 ext.bucket = 's3://documentation.redpillanalytics.com'
 ext.resourceBucket = 's3://rpa-build-resources'
 
@@ -154,7 +144,6 @@ task publishLatestDocs {
       }
    }
    dependsOn groovydoc
-   onlyIf { gitBranch == 'master' }
 }
 
 task copyBuildResources {
@@ -172,6 +161,5 @@ task copyBuildResources {
    }
 }
 
-tasks.publishPlugins.dependsOn publishVersionDocs, publishLatestDocs
 
 

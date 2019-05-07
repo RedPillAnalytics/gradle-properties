@@ -1,0 +1,26 @@
+version: '1.0'
+steps:
+
+    build_image:
+      title: Build Image
+      type: build
+      image_name: gradle
+    
+    build_plugin:
+      title: Build Plugin
+      image: ${{build_image}}
+      cmd:
+        - build
+        - copyBuildResources
+        - publishVersionDocs
+
+    publish_plugin:
+      title: Publish Plugin
+      image: ${{build_image}}
+      cmd:
+        - publishPlugins
+        - publishLatestDocs
+      when:
+        branch:
+          only:
+            - master
