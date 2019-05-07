@@ -24,7 +24,7 @@ steps:
           all:
             validateTargetBranch: '"${{CF_PULL_REQUEST_TARGET}}" == "master"'
             prActionClose: '"${{CF_PULL_REQUEST_ACTION}}" == "closed"'
-            prActionMerge: ${{CF_PULL_REQUEST_MERGED}}
+            prActionMerge: '${{CF_PULL_REQUEST_MERGED}}'
     
     build_plugin:
       title: Build Plugin
@@ -50,4 +50,4 @@ steps:
           all:
             validateTargetBranch: '"${{CF_PULL_REQUEST_TARGET}}" == "master"'
             prActionClose: '"${{CF_PULL_REQUEST_ACTION}}" == "closed"'
-            prActionMerge: ${{CF_PULL_REQUEST_MERGED}}
+            prActionMerge: '${{CF_PULL_REQUEST_MERGED}}'
