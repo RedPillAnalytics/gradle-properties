@@ -5,6 +5,26 @@ steps:
       title: Build Image
       type: build
       image_name: gradle
+      when:
+        condition:
+          any:
+            prActionOpen: '''${{CF_PULL_REQUEST_ACTION}}'' == ''opened'''
+            prActionSynch: '''${{CF_PULL_REQUEST_ACTION}}'' == ''synchronize'''
+
+    release_plugin:
+      title: Release Plugin
+      image: ${{build_image}}
+      cmd:
+        - clean
+        - release
+        - -Prelease.disableChecks
+        - -Prelease.localOnly
+      when:
+        condition:
+          all:
+            validateTargetBranch: '"${{CF_PULL_REQUEST_TARGET}}" == "master"'
+            prActionClose: '''${{CF_PULL_REQUEST_ACTION}}'' == ''closed'''
+            prActionMerge: '''${{CF_PULL_REQUEST_MERGED}}'' == true'
     
     build_plugin:
       title: Build Plugin
@@ -13,6 +33,11 @@ steps:
         - build
         - copyBuildResources
         - publishVersionDocs
+      when:
+        condition:
+          any:
+            prActionOpen: '''${{CF_PULL_REQUEST_ACTION}}'' == ''opened'''
+            prActionSynch: '''${{CF_PULL_REQUEST_ACTION}}'' == ''synchronize'''
 
     publish_plugin:
       title: Publish Plugin
@@ -21,6 +46,8 @@ steps:
         - publishPlugins
         - publishLatestDocs
       when:
-        branch:
-          only:
-            - master
+        condition:
+          all:
+            validateTargetBranch: '"${{CF_PULL_REQUEST_TARGET}}" == "master"'
+            prActionClose: '''${{CF_PULL_REQUEST_ACTION}}'' == ''closed'''
+            prActionMerge: '''${{CF_PULL_REQUEST_MERGED}}'' == true'
