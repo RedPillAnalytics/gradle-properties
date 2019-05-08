@@ -53,6 +53,7 @@ steps:
       environment:
         - REPORT_DIR=test
         - REPORT_INDEX_FILE=index.html
+        - CLEAR_TEST_REPORT=true
         - BUCKET_NAME=rpa-gradle-plugin-template-reports
         - CF_STORAGE_INTEGRATION=google-rpa-devops
       when:
