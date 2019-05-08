@@ -46,6 +46,7 @@ steps:
       cmd:
         - publishPlugins
         - publishLatestDocs
+        - githubRelease
       when:
         condition:
           all:
