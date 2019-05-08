@@ -12,7 +12,7 @@ class CI {
    }
 
    static getBuildNumber() {
-      return System.getenv('SOURCE_BUILD_NUMBER') ?: System.getenv('bamboo_buildNumber') ?: getTimestamp()
+      return System.getenv('SOURCE_BUILD_NUMBER') ?: System.getenv('CF_BUILD_ID') ?: System.getenv('bamboo_buildNumber') ?: getTimestamp()
    }
 
    static getBuildNumExt() {
@@ -20,7 +20,7 @@ class CI {
    }
 
    static getBuildTag() {
-      return System.getenv('BUILD_ID') ?: System.getenv('BUILD_TAG') ?: System.getenv('bamboo_buildResultKey') ?: getTimestamp()
+      return System.getenv('BUILD_ID') ?: System.getenv('BUILD_TAG') ?: System.getenv('CF_BUILD_URL') ?: System.getenv('bamboo_buildResultKey') ?: getTimestamp()
    }
 
    static getBuildTagExt() {
@@ -34,6 +34,7 @@ class CI {
 
    static getCIServer() {
       if (System.getenv('JENKINS_HOME')) return 'jenkins'
+      else if (System.getenv('CF_URL')) return 'codefresh'
       else if (System.getenv('bamboo_planKey')) return 'bamboo'
       else if (System.getenv('PROJECT_ID')) return 'cloud-build'
       else return 'other'
@@ -51,8 +52,12 @@ class CI {
       return getCIServer() == 'cloud-build'
    }
 
+   static isCodeFresh() {
+      return getCIServer() == 'codefresh'
+   }
+
    static getRepositoryUrl() {
-      return System.getenv('GIT_TAG') ?: System.getenv('bamboo_planRepository_repositoryUrl') ?: gitUtils.remoteUrl ?: ""
+      return System.getenv('GIT_TAG') ?: System.getenv('CF_BUILD_URL') ?: System.getenv('bamboo_planRepository_repositoryUrl') ?: gitUtils.remoteUrl ?: ""
    }
 
    static getGitHubOrg() {
