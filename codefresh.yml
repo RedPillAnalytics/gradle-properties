@@ -39,6 +39,21 @@ steps:
             prActionOpen: '"${{CF_PULL_REQUEST_ACTION}}" == "opened"'
             prActionSynch: '"${{CF_PULL_REQUEST_ACTION}}" == "synchronize"'
 
+    unit_tests:
+      title: Parse Gradle Test Reports
+      image: codefresh/cf-docker-test-reporting
+      working_directory: build/reports/tests
+      environment:
+        - REPORT_DIR=test
+        - REPORT_INDEX_FILE=index.html
+        - BUCKET_NAME=rpa-gradle-plugin-template-reports
+        - CF_STORAGE_INTEGRATION=google-rpa-devops
+      when:
+        condition:
+          any:
+            prActionOpen: '"${{CF_PULL_REQUEST_ACTION}}" == "opened"'
+            prActionSynch: '"${{CF_PULL_REQUEST_ACTION}}" == "synchronize"'
+
     publish_plugin:
       title: Publish Plugin
       image: ${{build_image}}
