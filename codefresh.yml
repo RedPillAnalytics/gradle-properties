@@ -5,11 +5,6 @@ steps:
       title: Build Image
       type: build
       image_name: gradle
-      when:
-        condition:
-          any:
-            prActionOpen: '"${{CF_PULL_REQUEST_ACTION}}" == "opened"'
-            prActionSynch: '"${{CF_PULL_REQUEST_ACTION}}" == "synchronize"'
 
     release_plugin:
       title: Release Plugin
@@ -33,18 +28,6 @@ steps:
         - build
         - copyBuildResources
         - publishVersionDocs
-      when:
-        condition:
-          any:
-            prActionOpen: '"${{CF_PULL_REQUEST_ACTION}}" == "opened"'
-            prActionSynch: '"${{CF_PULL_REQUEST_ACTION}}" == "synchronize"'
-
-    list_files:
-      title: List files
-      image: alpine:latest
-      commands:
-        - pwd
-        - echo ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/build/reports/tests/
 
     unit_tests:
       title: Parse Gradle Test Reports
@@ -56,11 +39,6 @@ steps:
         - CLEAR_TEST_REPORT=true
         - BUCKET_NAME=rpa-gradle-plugin-template-reports
         - CF_STORAGE_INTEGRATION=google-rpa-devops
-      when:
-        condition:
-          any:
-            prActionOpen: '"${{CF_PULL_REQUEST_ACTION}}" == "opened"'
-            prActionSynch: '"${{CF_PULL_REQUEST_ACTION}}" == "synchronize"'
 
     publish_plugin:
       title: Publish Plugin
