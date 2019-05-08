@@ -66,21 +66,6 @@ repositories {
    maven {
       url "https://plugins.gradle.org/m2/"
    }
-   maven {
-      url releaseUrl
-      authentication {
-         awsIm(AwsImAuthentication)
-      }
-   }
-   maven {
-      url snapshotUrl
-      authentication {
-         awsIm(AwsImAuthentication)
-      }
-   }
-   maven {
-      url "http://packages.confluent.io/maven/"
-   }
 }
 
 gradlePlugin {
@@ -94,14 +79,14 @@ gradlePlugin {
 
 pluginBundle {
 
-   website = 'http://redpillanalytics.com/'
+   website = "https://github.com/RedPillAnalytics/${pluginName}/"
    vcsUrl = "https://github.com/RedPillAnalytics/${pluginName}/"
 
    plugins {
       pluginTemplate {
          id = "com.redpillanalytics.${pluginName}"
          displayName = pluginName
-         description = "A plugin for publishing data from Gradle builds to a variety of cloud and on-premises data sinks."
+         description = "A plugin that does a lot of boilerplate for other Red Pill Analytics plugins."
          tags = ['plugin', 'template']
          version = project.version
       }
@@ -140,7 +125,7 @@ task publishLatestDocs {
    doLast {
       exec {
          executable 'aws'
-         args 's3', 'sync', groovydoc.destinationDir.getPath(), "${bucket}/${bucketPath}/latest/"
+         args 's3', 'sync', groovydoc.destinationDir.getPath(), "${bucket}/${pluginName}/latest/"
       }
    }
    dependsOn groovydoc

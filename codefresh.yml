@@ -5,6 +5,26 @@ steps:
       title: Build Image
       type: build
       image_name: gradle
+      when:
+        condition:
+          any:
+            prActionOpen: '"${{CF_PULL_REQUEST_ACTION}}" == "opened"'
+            prActionSynch: '"${{CF_PULL_REQUEST_ACTION}}" == "synchronize"'
+
+    release_plugin:
+      title: Release Plugin
+      image: ${{build_image}}
+      cmd:
+        - clean
+        - release
+        - -Prelease.disableChecks
+        - -Prelease.localOnly
+      when:
+        condition:
+          all:
+            validateTargetBranch: '"${{CF_PULL_REQUEST_TARGET}}" == "master"'
+            prActionClose: '"${{CF_PULL_REQUEST_ACTION}}" == "closed"'
+            prActionMerge: '"${{CF_PULL_REQUEST_MERGED}}" == "true"'
     
     build_plugin:
       title: Build Plugin
@@ -13,6 +33,34 @@ steps:
         - build
         - copyBuildResources
         - publishVersionDocs
+      when:
+        condition:
+          any:
+            prActionOpen: '"${{CF_PULL_REQUEST_ACTION}}" == "opened"'
+            prActionSynch: '"${{CF_PULL_REQUEST_ACTION}}" == "synchronize"'
+
+    list_files:
+      title: List files
+      image: alpine:latest
+      commands:
+        - pwd
+        - echo ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/build/reports/tests/
+
+    unit_tests:
+      title: Parse Gradle Test Reports
+      image: codefresh/cf-docker-test-reporting
+      working_directory: '${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/build/reports/tests/'
+      environment:
+        - REPORT_DIR=test
+        - REPORT_INDEX_FILE=index.html
+        - CLEAR_TEST_REPORT=true
+        - BUCKET_NAME=rpa-gradle-plugin-template-reports
+        - CF_STORAGE_INTEGRATION=google-rpa-devops
+      when:
+        condition:
+          any:
+            prActionOpen: '"${{CF_PULL_REQUEST_ACTION}}" == "opened"'
+            prActionSynch: '"${{CF_PULL_REQUEST_ACTION}}" == "synchronize"'
 
     publish_plugin:
       title: Publish Plugin
@@ -21,6 +69,8 @@ steps:
         - publishPlugins
         - publishLatestDocs
       when:
-        branch:
-          only:
-            - master
+        condition:
+          all:
+            validateTargetBranch: '"${{CF_PULL_REQUEST_TARGET}}" == "master"'
+            prActionClose: '"${{CF_PULL_REQUEST_ACTION}}" == "closed"'
+            prActionMerge: '"${{CF_PULL_REQUEST_MERGED}}" == "true"'
