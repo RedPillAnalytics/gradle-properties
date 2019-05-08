@@ -44,12 +44,12 @@ steps:
       image: alpine:latest
       commands:
         - pwd
-        - echo ${{main_clone}}/build/reports/tests/
+        - echo ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/build/reports/tests/
 
     unit_tests:
       title: Parse Gradle Test Reports
       image: codefresh/cf-docker-test-reporting
-      working_directory: '${{main_clone}}/build/reports/tests/'
+      working_directory: '${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/build/reports/tests/'
       environment:
         - REPORT_DIR=test
         - REPORT_INDEX_FILE=index.html
