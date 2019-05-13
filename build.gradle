@@ -96,7 +96,6 @@ pluginBundle {
 
 // Options for all tests
 tasks.withType(Test) {
-   ignoreFailures true
    testLogging.showStandardStreams true
    systemProperty 'projectDir', temporaryDir
 }

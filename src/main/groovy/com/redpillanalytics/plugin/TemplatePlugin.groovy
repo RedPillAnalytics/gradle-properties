@@ -1,4 +1,6 @@
 package com.redpillanalytics.plugin
+
+import com.redpillanalytics.plugin.containers.Namespace
 import groovy.util.logging.Slf4j
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -17,6 +19,9 @@ class TemplatePlugin implements Plugin<Project> {
       }
 
       project.afterEvaluate {
+         project.template.extensions.namespaces = project.container(Namespace)
+         //project.extensions.confluent.taskGroups.add(new Namespace(name: 'template'))
+
          // create git extensions
          project.ext.gitDescribeInfo = project.grgit?.describe(longDescr: true, tags: true)
          project.ext.gitLastTag = (project.ext.gitDescribeInfo?.split('-')?.getAt(0)) ?: 'v0.1.0'
