@@ -195,35 +195,6 @@ class Utils {
 
    }
 
-
-   static getModifiedBranch(String branchName) {
-
-      if (!branchName) {
-
-         return null
-
-      } else if (CI.isJenkins() && !(branchName =~ /(.+)(\/)/)) {
-
-         return getJenkinsRemote() + '/' + branchName
-
-      } else {
-
-         return branchName
-      }
-   }
-
-   static getJenkinsRemote() {
-
-      if (!CI.isJenkins())
-
-         return null
-
-      else
-
-         return System.getenv('GIT_BRANCH') - ~/\/.+/
-   }
-
-
    static getRelativePath(File root, File full) {
 
       return root.toURI().relativize(full.toURI()).toString()
