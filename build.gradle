@@ -13,7 +13,6 @@ plugins {
 }
 
 ext.pluginName = 'plugin-template'
-ext.repoName = 'gradle-plugin-template'
 
 // send analytics
 //analytics {
@@ -41,7 +40,7 @@ githubRelease {
 
    token = githubToken
    owner = 'RedPillAnalytics'
-   repo = repoName
+   repo = rootProject.name
    tagName = "v${version}"
    releaseAssets = fileTree(dir: buildDir, includes: ["**/*${version}*", "**/*${version}*.jar"]).toList()
 }
@@ -81,8 +80,8 @@ gradlePlugin {
 pluginBundle {
 
    description = "A plugin that does a lot of boilerplate for other Red Pill Analytics plugins."
-   website = "https://github.com/RedPillAnalytics/${repoName}/"
-   vcsUrl = "https://github.com/RedPillAnalytics/${repoName}/"
+   website = "https://github.com/RedPillAnalytics/${rootProject.name}/"
+   vcsUrl = "https://github.com/RedPillAnalytics/${rootProject.name}/"
 
    plugins {
       pluginTemplate {
@@ -91,6 +90,12 @@ pluginBundle {
          tags = ['plugin', 'template']
          version = project.version
       }
+   }
+
+   mavenCoordinates {
+      groupId = group
+      artifactId = pluginName
+      version = project.version
    }
 }
 
