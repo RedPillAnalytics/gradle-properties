@@ -11,7 +11,7 @@ import spock.lang.Unroll
 
 @Slf4j
 @Title("Execute :properties task")
-class PropertiesTest extends Specification {
+class TasksTest extends Specification {
 
    @ClassRule
    @Shared
@@ -35,7 +35,7 @@ class PropertiesTest extends Specification {
 
       result = GradleRunner.create()
               .withProjectDir(testProjectDir.root)
-              .withArguments('properties')
+              .withArguments('tasks')
               .withPluginClasspath()
               .build()
 
@@ -44,14 +44,14 @@ class PropertiesTest extends Specification {
 
 
    @Unroll
-   def "properties contains #property"() {
+   def ":tasks contains #task"() {
 
       given: "executing Gradle :properties"
 
       expect:
-      result.output.contains("$property")
+      result.output.contains("$task")
 
       where:
-      property << ['template']
+      task << ['s3Upload','s3Download']
    }
 }
