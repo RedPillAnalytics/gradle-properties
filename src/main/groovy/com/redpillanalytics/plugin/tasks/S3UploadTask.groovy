@@ -8,7 +8,7 @@ import org.gradle.api.tasks.TaskAction
 class S3UploadTask extends S3Task {
 
    S3UploadTask() {
-      description = 'Upload a file from S3.'
+      description = 'Upload a file to an S3 bucket.'
       group = 'AWS'
    }
 

@@ -19,7 +19,7 @@ class S3UploadSyncTask extends S3Task {
    boolean noRecursive
 
    S3UploadSyncTask() {
-      description = 'Synchronize a directory in S3.'
+      description = 'Synchronize a directory to an S3 bucket.'
       group = 'AWS'
    }
 
