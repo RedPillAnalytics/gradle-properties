@@ -13,10 +13,10 @@ import spock.lang.Title
 class S3UploadTest extends Specification {
 
    @Shared
-   File projectDir, buildDir, buildFile, resourcesDir, settingsFile
+   File projectDir, buildDir, buildFile, settingsFile
 
    @Shared
-   String taskName, odiPassword, masterUrl, masterPassword
+   String taskName, bucket = 'rpa-s3-test'
 
    @Shared
    def result
@@ -60,10 +60,37 @@ class S3UploadTest extends Specification {
       return result
    }
 
-   def "Execute :s3Download task with defaults"() {
+   def "Execute :s3Upload task with defaults"() {
       given:
-      taskName = 's3Download'
-      result = executeSingleTask(taskName, ['-Si', '--bucket-name', 'rpa-build-resources', '--key-name', 'gradle.properties'])
+      taskName = 's3Upload'
+      result = executeSingleTask(taskName, ['-Si', '--bucket-name', bucket, '--file-path', 'settings.gradle'])
+
+      expect:
+      result.task(":${taskName}").outcome.name() != 'FAILED'
+   }
+
+   def "Execute :s3Upload task with custom key-name"() {
+      given:
+      taskName = 's3Upload'
+      result = executeSingleTask(taskName, ['-Si', '--bucket-name', bucket, '--file-path', 'settings.gradle', '--key-name', 'custom-key-name.txt'])
+
+      expect:
+      result.task(":${taskName}").outcome.name() != 'FAILED'
+   }
+
+   def "Execute :s3UploadSync task with defaults"() {
+      given:
+      taskName = 's3UploadSync'
+      result = executeSingleTask(taskName, ['-Si', '--bucket-name', bucket, '--file-path', 'build'])
+
+      expect:
+      result.task(":${taskName}").outcome.name() != 'FAILED'
+   }
+
+   def "Execute :s3UploadSync task with custom key-name"() {
+      given:
+      taskName = 's3UploadSync'
+      result = executeSingleTask(taskName, ['-Si', '--bucket-name', bucket, '--file-path', 'build', '--key-name', 'custom-build'])
 
       expect:
       result.task(":${taskName}").outcome.name() != 'FAILED'

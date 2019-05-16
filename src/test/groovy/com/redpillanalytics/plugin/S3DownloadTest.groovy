@@ -13,10 +13,10 @@ import spock.lang.Title
 class S3DownloadTest extends Specification {
 
    @Shared
-   File projectDir, buildDir, buildFile, resourcesDir, settingsFile
+   File projectDir, buildDir, buildFile, settingsFile
 
    @Shared
-   String taskName, odiPassword, masterUrl, masterPassword
+   String taskName, bucket = 'rpa-s3-test'
 
    @Shared
    def result
@@ -63,7 +63,7 @@ class S3DownloadTest extends Specification {
    def "Execute :s3Download task with defaults"() {
       given:
       taskName = 's3Download'
-      result = executeSingleTask(taskName, ['-Si', '--bucket-name', 'rpa-build-resources', '--key-name', 'test-file.txt'])
+      result = executeSingleTask(taskName, ['-Si', '--bucket-name', bucket, '--key-name', 'test-file.txt'])
 
       expect:
       result.task(":${taskName}").outcome.name() != 'FAILED'
@@ -72,7 +72,7 @@ class S3DownloadTest extends Specification {
    def "Execute :s3Download task with custom file"() {
       given:
       taskName = 's3Download'
-      result = executeSingleTask(taskName, ['-Si', '--bucket-name', 'rpa-build-resources', '--key-name', 'test-file.txt', '--file-path', 'custom-file-path.txt'])
+      result = executeSingleTask(taskName, ['-Si', '--bucket-name', bucket, '--key-name', 'test-file.txt', '--file-path', 'custom-file-path.txt'])
 
       expect:
       result.task(":${taskName}").outcome.name() != 'FAILED'
@@ -81,7 +81,7 @@ class S3DownloadTest extends Specification {
    def "Execute :s3Download task with custom file path"() {
       given:
       taskName = 's3Download'
-      result = executeSingleTask(taskName, ['-Si', '--bucket-name', 'rpa-build-resources', '--key-name', 'test-file.txt', '--file-path', 'custom-dir/custom-file-path.txt'])
+      result = executeSingleTask(taskName, ['-Si', '--bucket-name', bucket, '--key-name', 'test-file.txt', '--file-path', 'custom-dir/custom-file-path.txt'])
 
       expect:
       result.task(":${taskName}").outcome.name() != 'FAILED'
