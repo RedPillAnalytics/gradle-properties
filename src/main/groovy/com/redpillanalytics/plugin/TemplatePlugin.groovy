@@ -2,9 +2,6 @@ package com.redpillanalytics.plugin
 
 import com.redpillanalytics.common.CI
 import com.redpillanalytics.plugin.containers.Namespace
-import com.redpillanalytics.plugin.tasks.S3DownloadTask
-import com.redpillanalytics.plugin.tasks.S3UploadSyncTask
-import com.redpillanalytics.plugin.tasks.S3UploadTask
 import groovy.util.logging.Slf4j
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -30,10 +27,6 @@ class TemplatePlugin implements Plugin<Project> {
       project.afterEvaluate {
          project.template.extensions.namespaces = project.container(Namespace)
          //project.extensions.confluent.taskGroups.add(new Namespace(name: 'template'))
-
-         project.task('s3Download', type: S3DownloadTask) {}
-         project.task('s3Upload', type: S3UploadTask) {}
-         project.task('s3UploadSync', type: S3UploadSyncTask) {}
       }
       // end of afterEvaluate
    }
