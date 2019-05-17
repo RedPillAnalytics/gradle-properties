@@ -1,3 +1,5 @@
+import com.redpillanalytics.aws.tasks.S3UploadSyncTask
+
 plugins {
    id "com.gradle.plugin-publish" version "0.10.1"
    id "pl.allegro.tech.build.axion-release" version "1.10.1"
@@ -8,19 +10,23 @@ plugins {
    id "com.github.ben-manes.versions" version "0.21.0"
    //id "org.dvaske.gradle.git-build-info" version "0.9"
    id 'com.adarshr.test-logger' version '1.6.0'
-   //id "com.redpillanalytics.gradle-analytics" version "1.2.3"
+   id "com.redpillanalytics.gradle-analytics" version "1.2.3"
    id "com.avast.gradle.docker-compose" version "0.9.4"
+   id "com.redpillanalytics.gradle-aws" version "0.1.0"
 }
 
 ext.pluginName = 'plugin-template'
 
 // send analytics
-//analytics {
-//   organization = 'Red Pill Analytics'
-//   sinks {
-//      pubsub
-//   }
-//}
+analytics {
+   organization = 'Red Pill Analytics'
+   sinks {
+      pubsub
+      s3 {
+         prefix = 'rpa-gradle-analytics'
+      }
+   }
+}
 
 scmVersion {
 
@@ -59,6 +65,9 @@ dependencies {
 
    // AWS
    compile 'com.amazonaws:aws-java-sdk-s3:+'
+
+   // Plugin so classes can be used
+   compile "gradle.plugin.com.redpillanalytics:gradle-aws:0.1.0"
 }
 
 // Default artifact naming.
@@ -111,17 +120,15 @@ tasks.withType(Test) {
 ext.bucket = 's3://documentation.redpillanalytics.com'
 ext.resourceBucket = 's3://rpa-build-resources'
 
-task publishVersionDocs {
+task publishVersionDocs(type: S3UploadSyncTask) {
 
    description = 'Upload version Groovydocs to s3.'
    group = 'documentation'
 
-   doLast {
-      exec {
-         executable 'aws'
-         args 's3', 'sync', groovydoc.destinationDir.getPath(), "${bucket}/${pluginName}/${version}/"
-      }
-   }
+   bucketName bucket
+   filePath groovydoc.destinationDir.getPath()
+   keyName "${bucket}/${pluginName}/${version}/"
+
    dependsOn groovydoc
 }
 

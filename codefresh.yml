@@ -53,3 +53,9 @@ steps:
             validateTargetBranch: '"${{CF_PULL_REQUEST_TARGET}}" == "master"'
             prActionClose: '"${{CF_PULL_REQUEST_ACTION}}" == "closed"'
             prActionMerge: '"${{CF_PULL_REQUEST_MERGED}}" == "true"'
+
+    analytics_producer:
+      title: Analytics Producer
+      image: ${{build_image}}
+      cmd:
+        - producer
