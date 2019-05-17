@@ -63,9 +63,6 @@ dependencies {
 
    testCompile 'org.spockframework:spock-core:1.2-groovy-2.5'
 
-   // AWS
-   compile 'com.amazonaws:aws-java-sdk-s3:+'
-
    // Plugin so classes can be used
    compile "gradle.plugin.com.redpillanalytics:gradle-aws:0.1.0"
 }
