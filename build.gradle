@@ -1,3 +1,4 @@
+import com.redpillanalytics.aws.tasks.S3DownloadTask
 import com.redpillanalytics.aws.tasks.S3UploadSyncTask
 
 plugins {
@@ -8,7 +9,6 @@ plugins {
    id 'java-gradle-plugin'
    id 'org.unbroken-dome.test-sets' version '2.1.1'
    id "com.github.ben-manes.versions" version "0.21.0"
-   //id "org.dvaske.gradle.git-build-info" version "0.9"
    id 'com.adarshr.test-logger' version '1.6.0'
    id "com.redpillanalytics.gradle-analytics" version "1.2.3"
    id "com.avast.gradle.docker-compose" version "0.9.4"
@@ -117,8 +117,8 @@ tasks.withType(Test) {
    systemProperty 'projectDir', temporaryDir
 }
 
-ext.bucket = 's3://documentation.redpillanalytics.com'
-ext.resourceBucket = 's3://rpa-build-resources'
+ext.bucket = 'documentation.redpillanalytics.com'
+ext.resourceBucket = 'rpa-build-resources'
 
 task publishVersionDocs(type: S3UploadSyncTask) {
 
@@ -127,38 +127,42 @@ task publishVersionDocs(type: S3UploadSyncTask) {
 
    bucketName bucket
    filePath groovydoc.destinationDir.getPath()
-   keyName "${bucket}/${pluginName}/${version}/"
+   keyName "${pluginName}/${version}"
 
    dependsOn groovydoc
 }
 
-task publishLatestDocs {
+task publishLatestDocs(type: S3UploadSyncTask) {
 
    description = 'Upload latest Groovydocs to s3.'
    group = 'documentation'
 
-   doLast {
-      exec {
-         executable 'aws'
-         args 's3', 'sync', groovydoc.destinationDir.getPath(), "${bucket}/${pluginName}/latest/"
-      }
-   }
+   bucketName bucket
+   filePath groovydoc.destinationDir.getPath()
+   keyName "${pluginName}/latest"
+
    dependsOn groovydoc
+}
+
+task copyGoogleJson(type: S3DownloadTask) {
+   description 'Copy Google JSON credentials file from S3.'
+   group 'build'
+
+   bucketName resourceBucket
+   keyName "gradle-analytics-build-user.json"
+}
+
+task copyGradleProps(type: S3DownloadTask) {
+   description 'Copy Gradle Properties file from S3.'
+   group 'build'
+
+   bucketName resourceBucket
+   keyName "gradle.properties"
 }
 
 task copyBuildResources {
    description 'Copy build resource files from S3.'
-   group 'build'
-   doLast {
-      exec {
-         executable 'aws'
-         args 's3', 'cp', "${resourceBucket}/gradle-analytics-build-user.json", "."
-      }
-      exec {
-         executable 'aws'
-         args 's3', 'cp', "${resourceBucket}/gradle.properties", "."
-      }
-   }
+   dependsOn copyGoogleJson, copyGradleProps
 }
 
 
