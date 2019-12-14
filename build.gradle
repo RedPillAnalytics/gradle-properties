@@ -10,23 +10,11 @@ plugins {
    id 'org.unbroken-dome.test-sets' version '2.1.1'
    id "com.github.ben-manes.versions" version "0.21.0"
    id 'com.adarshr.test-logger' version '1.6.0'
-   id "com.redpillanalytics.gradle-analytics" version "1.2.3"
    id "com.avast.gradle.docker-compose" version "0.9.4"
    id "com.redpillanalytics.gradle-aws" version "0.1.0"
 }
 
 ext.pluginName = 'plugin-template'
-
-// send analytics
-analytics {
-   organization = 'Red Pill Analytics'
-   sinks {
-      pubsub
-      s3 {
-         prefix = 'rpa-gradle-analytics'
-      }
-   }
-}
 
 scmVersion {
 
