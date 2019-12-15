@@ -58,7 +58,7 @@ gradlePlugin {
    plugins {
       pluginTemplate {
          id = "com.redpillanalytics.${pluginName}"
-         implementationClass = 'com.redpillanalytics.plugin.PropertiesPlugin'
+         implementationClass = 'com.redpillanalytics.gradle.PropertiesPlugin'
       }
    }
 }

@@ -1,10 +1,9 @@
-package com.redpillanalytics.plugin
+package com.redpillanalytics.gradle
 
 import groovy.util.logging.Slf4j
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.ClassRule
 import org.junit.rules.TemporaryFolder
-import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Title
@@ -12,7 +11,7 @@ import spock.lang.Unroll
 
 @Slf4j
 @Title("Execute :properties task")
-class PropertiesTest extends Specification {
+class ExtensionTest extends Specification {
 
    @ClassRule
    @Shared

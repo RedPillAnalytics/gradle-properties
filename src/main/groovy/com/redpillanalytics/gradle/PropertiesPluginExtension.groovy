@@ -1,8 +1,7 @@
-package com.redpillanalytics.plugin
+package com.redpillanalytics.gradle
 
 import groovy.util.logging.Slf4j
 import org.gradle.api.Project
-import org.gradle.api.artifacts.UnknownConfigurationException
 
 @Slf4j
 class PropertiesPluginExtension {

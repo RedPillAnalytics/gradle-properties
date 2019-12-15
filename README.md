@@ -1,3 +1,7 @@
-# gradle-template
-A template for applying common functionality to all the Red Pill Analytics Gradle plugins.
+# gradle-properties
+Assists plugin developers with assigning Gradle project properties to the extension of their plugin.
+
+## Usage
+
+Coming soon.
 
