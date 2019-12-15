@@ -4,6 +4,7 @@ import groovy.util.logging.Slf4j
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.ClassRule
 import org.junit.rules.TemporaryFolder
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Title
@@ -29,7 +30,7 @@ class PropertiesTest extends Specification {
       buildFile = testProjectDir.newFile('build.gradle')
       buildFile << """
             plugins {
-                id 'com.redpillanalytics.plugin-template'
+                id 'com.redpillanalytics.gradle-properties'
             }
         """
 
@@ -52,6 +53,6 @@ class PropertiesTest extends Specification {
       result.output.contains("$property")
 
       where:
-      property << ['template']
+      property << ['pluginProps']
    }
 }

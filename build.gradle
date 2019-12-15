@@ -1,20 +1,16 @@
-import com.redpillanalytics.aws.tasks.S3DownloadTask
-import com.redpillanalytics.aws.tasks.S3UploadSyncTask
-
 plugins {
    id "com.gradle.plugin-publish" version "0.10.1"
-   id "pl.allegro.tech.build.axion-release" version "1.10.1"
-   id "com.github.breadmoirai.github-release" version "2.2.8"
+   id "pl.allegro.tech.build.axion-release" version "1.10.2"
+   id "com.github.breadmoirai.github-release" version "2.2.10"
    id 'groovy'
    id 'java-gradle-plugin'
-   id 'org.unbroken-dome.test-sets' version '2.1.1'
-   id "com.github.ben-manes.versions" version "0.21.0"
-   id 'com.adarshr.test-logger' version '1.6.0'
-   id "com.avast.gradle.docker-compose" version "0.9.4"
-   id "com.redpillanalytics.gradle-aws" version "0.1.0"
+   id 'org.unbroken-dome.test-sets' version '2.2.1'
+   id "com.github.ben-manes.versions" version "0.27.0"
+   id 'com.adarshr.test-logger' version '2.0.0'
+   id "com.avast.gradle.docker-compose" version "0.10.7"
 }
 
-ext.pluginName = 'plugin-template'
+ext.pluginName = rootProject.name
 
 scmVersion {
 
@@ -45,14 +41,7 @@ dependencies {
    compile localGroovy()
    compile 'org.slf4j:slf4j-simple:+'
 
-   // git properties dependencies
-   compile "gradle.plugin.org.dvaske.gradle:git-build-info:0.9"
-   compile "org.ajoberstar.grgit:grgit-gradle:3.1.1"
-
    testCompile 'org.spockframework:spock-core:1.2-groovy-2.5'
-
-   // Plugin so classes can be used
-   compile "gradle.plugin.com.redpillanalytics:gradle-aws:0.1.0"
 }
 
 // Default artifact naming.
@@ -61,7 +50,7 @@ group = 'com.redpillanalytics'
 repositories {
    jcenter()
    maven {
-      url "https://plugins.gradle.org/m2/"
+      url "https://plugins.gradle.org/"
    }
 }
 
@@ -69,14 +58,14 @@ gradlePlugin {
    plugins {
       pluginTemplate {
          id = "com.redpillanalytics.${pluginName}"
-         implementationClass = 'com.redpillanalytics.plugin.TemplatePlugin'
+         implementationClass = 'com.redpillanalytics.plugin.PropertiesPlugin'
       }
    }
 }
 
 pluginBundle {
 
-   description = "A plugin that does a lot of boilerplate for other Red Pill Analytics plugins."
+   description = "Assists Plugin developers with assigning Gradle project properties to properties in the Plugin Extension."
    website = "https://github.com/RedPillAnalytics/${rootProject.name}/"
    vcsUrl = "https://github.com/RedPillAnalytics/${rootProject.name}/"
 
@@ -84,15 +73,9 @@ pluginBundle {
       pluginTemplate {
          id = "com.redpillanalytics.${pluginName}"
          displayName = pluginName
-         tags = ['plugin', 'template']
+         tags = ['project-properties','plugin-development']
          version = project.version
       }
-   }
-
-   mavenCoordinates {
-      groupId = group
-      artifactId = pluginName
-      version = project.version
    }
 }
 
@@ -102,53 +85,32 @@ tasks.withType(Test) {
    systemProperty 'projectDir', temporaryDir
 }
 
-ext.bucket = 'documentation.redpillanalytics.com'
-ext.resourceBucket = 'rpa-build-resources'
-
-task publishVersionDocs(type: S3UploadSyncTask) {
-
-   description = 'Upload version Groovydocs to s3.'
+def versionUrl = "${docBucket}/${rootProject.name}/${version}"
+task publishVersionDocs(type: Exec) {
+   description = 'Sync version Groovydocs to S3.'
    group = 'documentation'
-
-   bucketName bucket
-   filePath groovydoc.destinationDir.getPath()
-   keyName "${pluginName}/${version}"
-
+   executable 'aws'
+   args 's3', 'sync', groovydoc.destinationDir.getPath(), "s3://${versionUrl}"
+   doLast {
+      logger.warn "\nVersion docs: https://s3.amazonaws.com/${versionUrl}/index.html"
+   }
    dependsOn groovydoc
 }
 
-task publishLatestDocs(type: S3UploadSyncTask) {
-
-   description = 'Upload latest Groovydocs to s3.'
+def latestUrl = "${docBucket}/${rootProject.name}/latest"
+task publishLatestDocs(type: Exec) {
+   description = 'Sync version Groovydocs to S3.'
    group = 'documentation'
-
-   bucketName bucket
-   filePath groovydoc.destinationDir.getPath()
-   keyName "${pluginName}/latest"
-
+   executable 'aws'
+   args 's3', 'sync', groovydoc.destinationDir.getPath(), "s3://${latestUrl}"
+   doLast {
+      logger.warn "\nVersion docs: https://s3.amazonaws.com/${latestUrl}/index.html"
+   }
    dependsOn groovydoc
 }
 
-task copyGoogleJson(type: S3DownloadTask) {
-   description 'Copy Google JSON credentials file from S3.'
-   group 'build'
+tasks.publishPlugins.dependsOn tasks.publishVersionDocs, tasks.publishLatestDocs, tasks.githubRelease
 
-   bucketName resourceBucket
-   keyName "gradle-analytics-build-user.json"
-}
-
-task copyGradleProps(type: S3DownloadTask) {
-   description 'Copy Gradle Properties file from S3.'
-   group 'build'
-
-   bucketName resourceBucket
-   keyName "gradle.properties"
-}
-
-task copyBuildResources {
-   description 'Copy build resource files from S3.'
-   dependsOn copyGoogleJson, copyGradleProps
-}
 
 
 
