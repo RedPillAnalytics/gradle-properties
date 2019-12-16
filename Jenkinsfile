@@ -44,9 +44,15 @@ pipeline {
          when { branch "master" }
          steps {
             sh "$gradle publish -Pgradle.publish.key=${env.GRADLE_KEY} -Pgradle.publish.secret=${env.GRADLE_SECRET}"
-            archiveArtifacts artifacts: 'build/libs/*.jar', fingerprint: true, allowEmptyArchive: true
+            container('aws') {
+               sh "$gradle publishDocs"
+            }
+         }
+         post {
+            always {
+               archiveArtifacts artifacts: 'build/libs/*.jar', fingerprint: true, allowEmptyArchive: true
+            }
          }
       }
-
    }
 }
