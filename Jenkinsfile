@@ -3,8 +3,13 @@ def properties = "-Panalytics.buildTag=${env.BUILD_TAG}"
 def gradle = "./gradlew ${options} ${properties}"
 
 pipeline {
-   agent { label 'java-compile' }
-
+  agent {
+    kubernetes {
+      defaultContainer 'gradle'
+      yamlFile 'pod-template.yaml'
+      slaveConnectTimeout 200
+    }
+  }
    environment {
       ORG_GRADLE_PROJECT_githubToken = credentials('github-redpillanalyticsbot-secret')
 		AWS = credentials("rpa-development-build-server-svc")
