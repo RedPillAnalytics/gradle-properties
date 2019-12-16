@@ -13,7 +13,6 @@ plugins {
 ext.pluginName = rootProject.name
 
 scmVersion {
-
    tag {
       prefix = 'v'
       versionSeparator = ''
@@ -26,8 +25,15 @@ allprojects {
    project.version = scmVersion.version
 }
 
-githubRelease {
+task cleanJunit(type: Delete) {
+   delete getTestResultsDir()
+}
 
+task cleanLibs(type: Delete) {
+   delete getLibsDir()
+}
+
+githubRelease {
    token = githubToken
    owner = 'RedPillAnalytics'
    repo = rootProject.name
@@ -36,11 +42,9 @@ githubRelease {
 }
 
 dependencies {
-
    compile gradleApi()
    compile localGroovy()
    compile 'org.slf4j:slf4j-simple:+'
-
    testCompile 'org.spockframework:spock-core:1.2-groovy-2.5'
 }
 
@@ -80,7 +84,15 @@ pluginBundle {
 }
 
 // Options for all tests
+task runAllTests {
+   description 'Run all defined tests.'
+   group 'verification'
+}
+
 tasks.withType(Test) {
+   tasks.runAllTests.dependsOn it
+   failFast true
+   ignoreFailures true
    testLogging.showStandardStreams true
    systemProperty 'projectDir', temporaryDir
 }
@@ -104,13 +116,16 @@ task publishLatestDocs(type: Exec) {
    executable 'aws'
    args 's3', 'sync', groovydoc.destinationDir.getPath(), "s3://${latestUrl}"
    doLast {
-      logger.warn "\nVersion docs: https://s3.amazonaws.com/${latestUrl}/index.html"
+      logger.warn "\nLatest docs: https://s3.amazonaws.com/${latestUrl}/index.html"
    }
    dependsOn groovydoc
 }
+// create a publish task
+task publish {
+   description 'Custom publish task.'
+   group 'publishing'
+   dependsOn tasks.publishPlugins, tasks.publishVersionDocs, tasks.publishLatestDocs, tasks.githubRelease
+}
 
-tasks.publishPlugins.dependsOn tasks.publishVersionDocs, tasks.publishLatestDocs, tasks.githubRelease
-
-
-
+tasks.githubRelease.mustRunAfter tasks.publishPlugins
 
