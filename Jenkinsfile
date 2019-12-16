@@ -29,14 +29,13 @@ pipeline {
          }
       }
 
-      stage('Build') {
+      stage('Test') {
          steps {
-            sh "$gradle cleanJunit cV build runAllTests"
+            sh "$gradle cleanJunit cV runAllTests"
          }
          post {
             always {
                junit testResults: 'build/test-results/test/*.xml', allowEmptyResults: true
-               archiveArtifacts artifacts: 'build/libs/*.jar', fingerprint: true, allowEmptyArchive: true
             }
          }
       }
@@ -45,6 +44,7 @@ pipeline {
          when { branch "master" }
          steps {
             sh "$gradle publishPlugins -Pgradle.publish.key=${env.GRADLE_KEY} -Pgradle.publish.secret=${env.GRADLE_SECRET}"
+            archiveArtifacts artifacts: 'build/libs/*.jar', fingerprint: true, allowEmptyArchive: true
          }
       }
 
