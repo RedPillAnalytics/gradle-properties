@@ -87,7 +87,6 @@ pluginBundle {
 task runAllTests {
    description 'Run all defined tests.'
    group 'verification'
-   mustRunAfter tasks.startOBI
 }
 
 tasks.withType(Test) {
@@ -117,7 +116,7 @@ task publishLatestDocs(type: Exec) {
    executable 'aws'
    args 's3', 'sync', groovydoc.destinationDir.getPath(), "s3://${latestUrl}"
    doLast {
-      logger.warn "\nVersion docs: https://s3.amazonaws.com/${latestUrl}/index.html"
+      logger.warn "\nLatest docs: https://s3.amazonaws.com/${latestUrl}/index.html"
    }
    dependsOn groovydoc
 }
