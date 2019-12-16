@@ -2,6 +2,7 @@ package com.redpillanalytics.gradle
 
 import groovy.util.logging.Slf4j
 import org.gradle.api.Project
+import org.gradle.api.artifacts.UnknownConfigurationException
 
 @Slf4j
 class PropertiesPluginExtension {
@@ -64,6 +65,29 @@ class PropertiesPluginExtension {
                }
             }
          }
+      }
+   }
+
+   def getDependency(Project project, String configuration, String regexp) {
+
+      return project.configurations."$configuration".find { File file -> file.absolutePath =~ regexp }
+   }
+
+   boolean dependencyMatching(Project project, String configuration, String regexp) {
+      return (project.configurations."$configuration".dependencies.find { it.name =~ regexp }) ?: false
+   }
+
+   boolean isUsableConfiguration(Project project, String configuration, String regexp) {
+
+      try {
+
+         if (getDependency(project, configuration, regexp)) {
+            return true
+         } else {
+            return false
+         }
+      } catch (UnknownConfigurationException e) {
+         return false
       }
    }
 }
