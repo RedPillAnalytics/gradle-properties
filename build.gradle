@@ -13,7 +13,6 @@ plugins {
 ext.pluginName = rootProject.name
 
 scmVersion {
-
    tag {
       prefix = 'v'
       versionSeparator = ''
@@ -27,7 +26,6 @@ allprojects {
 }
 
 githubRelease {
-
    token = githubToken
    owner = 'RedPillAnalytics'
    repo = rootProject.name
@@ -36,11 +34,9 @@ githubRelease {
 }
 
 dependencies {
-
    compile gradleApi()
    compile localGroovy()
    compile 'org.slf4j:slf4j-simple:+'
-
    testCompile 'org.spockframework:spock-core:1.2-groovy-2.5'
 }
 
@@ -110,7 +106,3 @@ task publishLatestDocs(type: Exec) {
 }
 
 tasks.publishPlugins.dependsOn tasks.publishVersionDocs, tasks.publishLatestDocs, tasks.githubRelease
-
-
-
-

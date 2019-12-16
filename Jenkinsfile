@@ -47,7 +47,6 @@ pipeline {
             sh "$gradle publishPlugins -Pgradle.publish.key=${env.GRADLE_KEY} -Pgradle.publish.secret=${env.GRADLE_SECRET}"
          }
       }
-      // Place for new Stage
 
-   } // end of Stages
+   }
 }
