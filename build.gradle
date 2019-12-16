@@ -120,5 +120,12 @@ task publishLatestDocs(type: Exec) {
    }
    dependsOn groovydoc
 }
+// create a publish task
+task publish {
+   description 'Custom publish task.'
+   group 'publishing'
+   dependsOn tasks.publishPlugins, tasks.publishVersionDocs, tasks.publishLatestDocs, tasks.githubRelease
+}
 
-tasks.publishPlugins.dependsOn tasks.publishVersionDocs, tasks.publishLatestDocs, tasks.githubRelease
+tasks.githubRelease.mustRunAfter tasks.publishPlugins
+
