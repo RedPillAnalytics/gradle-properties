@@ -43,7 +43,7 @@ pipeline {
       stage('Publish') {
          when { branch "master" }
          steps {
-            sh "$gradle publishPlugins -Pgradle.publish.key=${env.GRADLE_KEY} -Pgradle.publish.secret=${env.GRADLE_SECRET}"
+            sh "$gradle publish -Pgradle.publish.key=${env.GRADLE_KEY} -Pgradle.publish.secret=${env.GRADLE_SECRET}"
             archiveArtifacts artifacts: 'build/libs/*.jar', fingerprint: true, allowEmptyArchive: true
          }
       }
