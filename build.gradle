@@ -41,7 +41,7 @@ aws {
          key =  "${pluginName}/latest/"
          path = groovydoc.destinationDir.getPath()
       }
-      release {
+      version {
          bucket = docsBucket
          key = "${pluginName}/${version}/"
          path = groovydoc.destinationDir.getPath()
@@ -117,7 +117,7 @@ tasks.withType(Test) {
 task publish {
    description 'Custom publish task.'
    group 'publishing'
-   dependsOn tasks.publishPlugins, tasks.githubRelease
+   dependsOn tasks.publishPlugins, tasks.githubRelease, tasks.groovydoc, 'latestS3UploadSync', 'versionS3UploadSync'
 }
 
 tasks.githubRelease.mustRunAfter tasks.publishPlugins
