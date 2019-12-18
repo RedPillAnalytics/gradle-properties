@@ -1,6 +1,6 @@
 def options = '-S'
 def properties = "-Panalytics.buildTag=${env.BUILD_TAG}"
-def gradle = "./gradlew ${options} ${properties}"
+def gradle = "gradle ${options} ${properties}"
 
 pipeline {
   agent {
@@ -15,6 +15,7 @@ pipeline {
 		AWS = credentials("rpa-development-build-server-svc")
 		AWS_ACCESS_KEY_ID = "${env.AWS_USR}"
 		AWS_SECRET_ACCESS_KEY = "${env.AWS_PSW}"
+		AWS_REGION = 'us-east-1'
 		GRADLE_COMBINED = credentials("gradle-publish-key")
 		GRADLE_KEY = "${env.GRADLE_COMBINED_USR}"
 		GRADLE_SECRET = "${env.GRADLE_COMBINED_PSW}"
@@ -44,9 +45,6 @@ pipeline {
          when { branch "master" }
          steps {
             sh "$gradle publish -Pgradle.publish.key=${env.GRADLE_KEY} -Pgradle.publish.secret=${env.GRADLE_SECRET}"
-            container('aws') {
-               sh "$gradle publishDocs"
-            }
          }
          post {
             always {
