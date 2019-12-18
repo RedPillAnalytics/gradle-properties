@@ -8,7 +8,6 @@ plugins {
    id "com.github.ben-manes.versions" version "0.27.0"
    id 'com.adarshr.test-logger' version '2.0.0'
    id "com.avast.gradle.docker-compose" version "0.10.7"
-   //id "com.redpillanalytics.gradle-aws" version "0.1.6"
 }
 
 ext.pluginName = rootProject.name
@@ -33,21 +32,6 @@ task cleanJunit(type: Delete) {
 task cleanLibs(type: Delete) {
    delete getLibsDir()
 }
-
-//aws {
-//   s3 {
-//      latest {
-//         bucket = docsBucket
-//         key =  "${pluginName}/latest/"
-//         path = groovydoc.destinationDir.getPath()
-//      }
-//      version {
-//         bucket = docsBucket
-//         key = "${pluginName}/${version}/"
-//         path = groovydoc.destinationDir.getPath()
-//      }
-//   }
-//}
 
 githubRelease {
    token = githubToken
