@@ -45,9 +45,6 @@ pipeline {
          when { branch "master" }
          steps {
             sh "$gradle publish -Pgradle.publish.key=${env.GRADLE_KEY} -Pgradle.publish.secret=${env.GRADLE_SECRET}"
-            container('aws') {
-               sh "$gradle publishDocs"
-            }
          }
          post {
             always {
