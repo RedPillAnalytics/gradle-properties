@@ -13,3 +13,7 @@ spec:
     env:
     - name: GRADLE_USER_HOME
       value: .gradle
+  - name: aws
+    image: mikesir87/aws-cli
+    command: ['cat']
+    tty: true

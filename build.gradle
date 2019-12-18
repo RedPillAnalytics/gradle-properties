@@ -99,8 +99,8 @@ tasks.withType(Test) {
 
 def versionUrl = "${docBucket}/${rootProject.name}/${version}"
 task publishVersionDocs(type: Exec) {
-   description = 'Sync version Groovydocs to S3.'
-   group = 'documentation'
+   description 'Publish version Groovydocs to S3.'
+   group 'publishing'
    executable 'aws'
    args 's3', 'sync', groovydoc.destinationDir.getPath(), "s3://${versionUrl}"
    doLast {
@@ -111,8 +111,8 @@ task publishVersionDocs(type: Exec) {
 
 def latestUrl = "${docBucket}/${rootProject.name}/latest"
 task publishLatestDocs(type: Exec) {
-   description = 'Sync version Groovydocs to S3.'
-   group = 'documentation'
+   description 'Publish latest Groovydocs to S3.'
+   group 'publishing'
    executable 'aws'
    args 's3', 'sync', groovydoc.destinationDir.getPath(), "s3://${latestUrl}"
    doLast {
@@ -124,8 +124,13 @@ task publishLatestDocs(type: Exec) {
 task publish {
    description 'Custom publish task.'
    group 'publishing'
-   dependsOn tasks.publishPlugins, tasks.publishVersionDocs, tasks.publishLatestDocs, tasks.githubRelease
+   dependsOn tasks.publishPlugins, tasks.githubRelease
 }
 
 tasks.githubRelease.mustRunAfter tasks.publishPlugins
 
+task publishDocs {
+   description 'Publish all docs.'
+   group 'publishing'
+   dependsOn tasks.publishVersionDocs, tasks.publishLatestDocs
+}
