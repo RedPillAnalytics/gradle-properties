@@ -7,7 +7,7 @@ spec:
     - name: CONTAINER_ENV_VAR
       value: jnlp
   - name: gradle
-    image: gradle
+    image: gcr.io/$PROJECT_ID/gradle
     command: ['cat']
     tty: true
     env:
