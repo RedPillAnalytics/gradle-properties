@@ -8,7 +8,6 @@ plugins {
    id "com.github.ben-manes.versions" version "0.27.0"
    id 'com.adarshr.test-logger' version '2.0.0'
    id "com.avast.gradle.docker-compose" version "0.10.7"
-   //id "com.redpillanalytics.gradle-aws" version "0.1.6"
 }
 
 ext.pluginName = rootProject.name
@@ -34,21 +33,6 @@ task cleanLibs(type: Delete) {
    delete getLibsDir()
 }
 
-//aws {
-//   s3 {
-//      latest {
-//         bucket = docsBucket
-//         key =  "${pluginName}/latest/"
-//         path = groovydoc.destinationDir.getPath()
-//      }
-//      version {
-//         bucket = docsBucket
-//         key = "${pluginName}/${version}/"
-//         path = groovydoc.destinationDir.getPath()
-//      }
-//   }
-//}
-
 githubRelease {
    token = githubToken
    owner = 'RedPillAnalytics'
@@ -61,7 +45,8 @@ dependencies {
    compile gradleApi()
    compile localGroovy()
    compile 'org.slf4j:slf4j-simple:+'
-   testCompile 'org.spockframework:spock-core:1.2-groovy-2.5'
+   compile 'org.eclipse.jgit:org.eclipse.jgit:+'
+   testCompile 'org.spockframework:spock-core:+'
 }
 
 // Default artifact naming.
