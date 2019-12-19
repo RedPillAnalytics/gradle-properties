@@ -45,7 +45,8 @@ dependencies {
    compile gradleApi()
    compile localGroovy()
    compile 'org.slf4j:slf4j-simple:+'
-   testCompile 'org.spockframework:spock-core:1.2-groovy-2.5'
+   compile 'org.eclipse.jgit:org.eclipse.jgit:+'
+   testCompile 'org.spockframework:spock-core:+'
 }
 
 // Default artifact naming.
