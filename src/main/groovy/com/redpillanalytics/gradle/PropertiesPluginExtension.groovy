@@ -27,7 +27,7 @@ class PropertiesPluginExtension {
             // if "extensionName" matches the one we are looking for, and "property" exists, then set that property in the extension
             if (extensionName == extension && project."$extension".hasProperty(property)) {
 
-               log.warn "Setting configuration property for extension: $extension, property: $property, value: $value"
+               log.debug "Setting configuration property for extension: $extension, property: $property, value: $value"
 
                if (project.extensions.getByName(extension)."$property" instanceof Boolean) {
 
@@ -52,7 +52,7 @@ class PropertiesPluginExtension {
             // if "extensionName" matches the one we are looking for, and "property" exists, then set that property in the extension
             if (extensionName == extension && project."$extension".hasProperty(property)) {
 
-               log.warn "Setting configuration property for extension: $extension, property: $property, value: $value"
+               log.debug "Setting configuration property for extension: $extension, property: $property, value: $value"
 
                if (project.extensions.getByName(extension)."$property" instanceof Boolean) {
 
