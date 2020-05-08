@@ -42,7 +42,7 @@ class PropertiesPluginExtension {
          }
 
          // we also want to support using a period replacement value for environment variables
-         // by default this is true, and uses an udnerscore
+         // by default this is true, and uses an underscore
          if ( enableReplacement && key =~ /${extension}${replacementValue}/) {
 
             // first look for all properties that use a "." (period) to separate extensions
