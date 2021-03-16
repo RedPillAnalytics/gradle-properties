@@ -1,3 +1,5 @@
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+
 plugins {
    id "com.gradle.plugin-publish" version "0.13.0"
    id "com.github.breadmoirai.github-release" version "2.2.12"
@@ -16,6 +18,12 @@ task cleanJunit(type: Delete) {
 
 task cleanLibs(type: Delete) {
    delete getLibsDir()
+}
+
+java {
+   toolchain {
+      languageVersion = JavaLanguageVersion.of(8)
+   }
 }
 
 githubRelease {
