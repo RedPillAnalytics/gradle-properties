@@ -19,6 +19,10 @@ class ExtensionTest extends Specification {
 
    @Shared
    File buildFile
+
+   @Shared
+   String taskName
+
    @Shared
    def result
 
@@ -32,26 +36,31 @@ class ExtensionTest extends Specification {
                 id 'com.redpillanalytics.gradle-properties'
             }
         """
+   }
 
+   // helper method
+   def executeSingleTask(String taskName, List otherArgs, Boolean logOutput = true) {
+      otherArgs.add(0, taskName)
+      log.warn "runner arguments: ${otherArgs.toString()}"
+      // execute the Gradle test build
       result = GradleRunner.create()
               .withProjectDir(testProjectDir.root)
-              .withArguments('properties')
+              .withArguments(otherArgs)
               .withPluginClasspath()
               .build()
 
-      log.warn result.output
+      // log the results
+      if (logOutput) log.warn result.getOutput()
+      return result
    }
 
-
-   @Unroll
-   def "properties contains #property"() {
-
-      given: "executing Gradle :properties"
+   def "Execute :properties task"() {
+      given:
+      taskName = 'properties'
+      result = executeSingleTask(taskName, ['-Si'])
 
       expect:
-      result.output.contains("$property")
-
-      where:
-      property << ['pluginProps']
+      !result.tasks.collect { it.outcome }.contains('FAILURE')
+      result.output.contains('pluginProps')
    }
 }

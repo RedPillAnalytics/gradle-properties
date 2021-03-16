@@ -1,11 +1,11 @@
-package com.redpillanalytics.gradle
+package com.redpillanalytics.gradle.properties
 
 import groovy.util.logging.Slf4j
 import org.gradle.api.Project
 import org.gradle.api.artifacts.UnknownConfigurationException
 
 @Slf4j
-class PropertiesPluginExtension {
+class GradleExtension {
 
    // will we support a replacement of "." with something else?
    Boolean enableReplacement = true
@@ -18,7 +18,7 @@ class PropertiesPluginExtension {
       project.ext.properties.each { key, value ->
 
          // first look for all properties that use a "." (period) to separate extensions
-         // for instance, look for all "confluent" properties such as "confluent.pipelineEndpoint", so we can get "pipelineEndpoint".
+         // this will find "<plugin>.<property>" and apply that property to the plugin extension
          if (key =~ /$extension\./) {
 
             // split the property on the "." (period) to get "extensionName" and "property"
