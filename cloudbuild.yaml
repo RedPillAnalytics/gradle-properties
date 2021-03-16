@@ -11,15 +11,6 @@ substitutions:
   # Get repository URL
   _REPO_URL: $(body.repository.html_url)
 steps:
-  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
-    id: prepare-gradle
-    entrypoint: bash
-    args:
-      - '-cx'
-      - |
-        mkdir -m 777 /workspace/.gradle
-        mkdir -m 777 /workspace/build
-    waitFor: [ '-' ]
   - name: gcr.io/rpa-devops/project-version
     id: version
     args:
@@ -31,29 +22,14 @@ steps:
     args:
       - '--bucket=$_CACHE_BUCKET'
       - '--key=${REPO_NAME}-$( checksum build.gradle )'
-    waitFor:
-      - prepare-gradle
-  - name: gcr.io/$PROJECT_ID/oas
-    id: build
-    entrypoint: bash
-    args:
-      - '-cx'
-      - |
-        ./gradlew build -S
-        ls -l /workspace/build/libs
-    waitFor:
-      - version
-      - restore-cache
-  - name: gcr.io/$PROJECT_ID/oas
+    waitFor: [ '-' ]
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     id: test
     entrypoint: bash
     args:
       - '-cx'
       - |
-        runOAS.sh
-        ./gradlew runAllTests buildDashboard -S
-    waitFor:
-      - build
+        ./gradlew build runAllTests buildDashboard -S
   - name: 'gcr.io/$PROJECT_ID/save_cache'
     id: save-cache
     args:
