@@ -36,7 +36,6 @@ githubRelease {
 
 dependencies {
    implementation 'org.codehaus.groovy:groovy:3.0.8'
-   //implementation 'org.slf4j:slf4j-simple:1.7.30'
    implementation 'org.eclipse.jgit:org.eclipse.jgit:5.11.1.202105131744-r'
    testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0'
 }
