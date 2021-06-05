@@ -1,19 +1,18 @@
 package com.redpillanalytics.gradle
 
 import groovy.util.logging.Slf4j
+import org.gradle.internal.impldep.org.junit.Rule
+import org.gradle.internal.impldep.org.junit.rules.TemporaryFolder
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.ClassRule
-import org.junit.rules.TemporaryFolder
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Title
-import spock.lang.Unroll
 
 @Slf4j
 @Title("Execute :properties task")
 class ExtensionTest extends Specification {
 
-   @ClassRule
+   @Rule
    @Shared
    TemporaryFolder testProjectDir = new TemporaryFolder()
 
@@ -29,7 +28,7 @@ class ExtensionTest extends Specification {
    // run the Gradle build
    // return regular output
    def setupSpec() {
-
+      testProjectDir.create()
       buildFile = testProjectDir.newFile('build.gradle')
       buildFile << """
             plugins {
