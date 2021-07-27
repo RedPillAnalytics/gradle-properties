@@ -39,7 +39,6 @@ class GradleUtils {
    }
 
    static isUsableConfiguration(Project project, String configuration, String regexp) {
-
       try {
          if (getDependency(project, configuration, regexp)) {
             return true
