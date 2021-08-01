@@ -19,6 +19,7 @@ build/
 
 # Plugin builds
 out
+gradle-cache
 
 # Ignore Gradle GUI config
 gradle-app.setting

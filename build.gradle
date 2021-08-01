@@ -27,7 +27,7 @@ java {
 }
 
 githubRelease {
-   token findProperty('githubToken')
+   token findProperty('githubToken').toString()
    owner 'RedPillAnalytics'
    repo rootProject.name
    overwrite true
