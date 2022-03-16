@@ -1,13 +1,11 @@
-import org.gradle.jvm.toolchain.JavaLanguageVersion
-
 plugins {
-   id "com.gradle.plugin-publish" version "0.15.0"
+   id "com.gradle.plugin-publish" version "0.20.0"
    id "com.github.breadmoirai.github-release" version "2.2.12"
    id 'groovy'
    id 'java-gradle-plugin'
    id 'org.unbroken-dome.test-sets' version '4.0.0'
-   id "com.github.ben-manes.versions" version "0.39.0"
-   id 'com.adarshr.test-logger' version '3.0.0'
+   id "com.github.ben-manes.versions" version "0.42.0"
+   id 'com.adarshr.test-logger' version '3.2.0'
    id 'build-dashboard'
 }
 ext.pluginName = rootProject.name
@@ -35,8 +33,8 @@ githubRelease {
 }
 
 dependencies {
-   implementation 'org.codehaus.groovy:groovy:3.0.8'
-   implementation 'org.eclipse.jgit:org.eclipse.jgit:5.12.0.202106070339-r'
+   implementation 'org.codehaus.groovy:groovy:3.0.10'
+   implementation 'org.eclipse.jgit:org.eclipse.jgit:6.1.0.202203080745-r'
    testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0'
 }
 
