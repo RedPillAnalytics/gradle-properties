@@ -1,6 +1,6 @@
 plugins {
-   id "com.gradle.plugin-publish" version "0.21.0"
-   id "com.github.breadmoirai.github-release" version "2.2.12"
+   id "com.gradle.plugin-publish" version "1.0.0"
+   id "com.github.breadmoirai.github-release" version "2.4.1"
    id 'groovy'
    id 'java-gradle-plugin'
    id 'org.unbroken-dome.test-sets' version '4.0.0'
@@ -33,9 +33,13 @@ githubRelease {
 }
 
 dependencies {
-   implementation 'org.codehaus.groovy:groovy:3.0.10'
-   implementation 'org.eclipse.jgit:org.eclipse.jgit:6.1.0.202203080745-r'
-   testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0'
+   implementation 'org.apache.groovy:groovy:4.0.5'
+   implementation 'org.eclipse.jgit:org.eclipse.jgit:6.3.0.202209071007-r'
+   testImplementation 'org.spockframework:spock-core:2.2-groovy-4.0'
+}
+
+tasks.withType(GroovyCompile).configureEach {
+    options.forkOptions.jvmArgs << '-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true'    //it works! But be aware that "options" not "groovyOptions"!
 }
 
 // Default artifact naming.
@@ -48,27 +52,20 @@ repositories {
    }
 }
 
-gradlePlugin {
-   plugins {
-      pluginTemplate {
-         id = "com.redpillanalytics.${pluginName}"
-         implementationClass = 'com.redpillanalytics.gradle.properties.GradlePlugin'
-      }
-   }
-}
-
 pluginBundle {
 
    description = "Assists Plugin developers with assigning Gradle project properties to properties in the Plugin Extension."
    website = "https://github.com/RedPillAnalytics/${rootProject.name}/"
    vcsUrl = "https://github.com/RedPillAnalytics/${rootProject.name}/"
+   tags = ['project-properties','plugin-development']
+}
 
+gradlePlugin {
    plugins {
-      pluginTemplate {
+      gradleProperties {
          id = "com.redpillanalytics.${pluginName}"
-         displayName = pluginName
-         tags = ['project-properties','plugin-development']
-         version = project.version
+         displayName = 'Gradle Properties'
+         implementationClass = 'com.redpillanalytics.gradle.properties.GradlePlugin'
       }
    }
 }
@@ -84,13 +81,6 @@ tasks.withType(Test) {
    failFast true
    systemProperty 'projectDir', temporaryDir
    useJUnitPlatform()
-}
-
-// create a publish task
-task publish {
-   description 'Custom publish task.'
-   group 'publishing'
-   dependsOn tasks.publishPlugins, tasks.githubRelease
 }
 
 tasks.githubRelease.mustRunAfter tasks.publishPlugins
